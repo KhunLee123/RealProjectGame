@@ -1,86 +1,112 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // 🚨 ต้องเพิ่มบรรทัดนี้ เพื่อให้สคริปต์รู้จักคำสั่ง Image
 
 public class ToggleCanvas : MonoBehaviour
 {
+    [Header("Window Animation Settings")]
     public Transform terminalWindow; 
-    public TMP_InputField inputField;
-    
-    [Header("ลากหน้าต่าง Terminal (Image) มาใส่อีกรอบเพื่อคุมสีพื้นหลัง")]
-    public Image backgroundImage; 
+    public float popSpeed = 15f; 
 
-    public float popSpeed = 15f;
+    [Header("Instant UI Panels")]
+    public Transform extraPanel; 
+
+    [Header("Elements to HIDE on Submit")]
+    public GameObject inputArea; 
+    public GameObject extraHideElement1; 
+    public GameObject extraHideElement2; 
+
+    [Header("Elements to SHOW on Submit")]
+    public GameObject outputArea; 
+
+    // ✨ เพิ่มช่องนี้เข้ามาใหม่: ซ่อนเมื่อเปิด Terminal โชว์เมื่อปิด
+    [Header("ซ่อน Object นี้เมื่อเปิด Terminal")]
+    public GameObject objectToHideWhenOpen; 
+
+    [Header("Sound Effects (เสียงประกอบ)")]
+    public AudioSource audioSource; // ตัวลำโพง
+    public AudioClip openSound;     // ไฟล์เสียงตอนเปิด
+    public AudioClip closeSound;    // ไฟล์เสียงตอนปิด
 
     private bool isOpen = false;
-    private bool isShowingOutputOnly = false; // เอาไว้เช็คว่าตอนนี้โชว์แค่ผลลัพธ์อยู่ไหม
 
     void Start()
     {
         if (terminalWindow != null) terminalWindow.localScale = Vector3.zero;
+        if (extraPanel != null) extraPanel.localScale = Vector3.zero;
     }
 
     void Update()
     {
-        // 1. ถ้าโชว์แค่ตัวหนังสืออยู่ และผู้เล่นกด Esc -> ให้ปิดหน้าต่างทั้งหมดและกลับเข้าเกม
-        if (isOpen && isShowingOutputOnly && Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.F) && !isOpen)
+        {
+            OpenTerminal();
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && isOpen)
         {
             CloseTerminal();
-            return;
         }
 
-        // 2. ถ้าไม่ได้โชว์ตัวหนังสือลอยๆ อยู่ ให้ใช้ปุ่ม F เปิด/ปิดได้ตามปกติ
-        if (Input.GetKeyDown(KeyCode.F) && !isShowingOutputOnly)
-        {
-            if (isOpen) CloseTerminal();
-            else OpenTerminal();
-        }
+        Vector3 targetScale = isOpen ? Vector3.one : Vector3.zero;
 
-        // แอนิเมชันยืดหด
         if (terminalWindow != null)
-        {
-            Vector3 targetScale = isOpen ? Vector3.one : Vector3.zero;
             terminalWindow.localScale = Vector3.Lerp(terminalWindow.localScale, targetScale, Time.unscaledDeltaTime * popSpeed);
-        }
+
+        if (extraPanel != null)
+            extraPanel.localScale = targetScale;
     }
 
     public void OpenTerminal()
     {
         isOpen = true;
-        isShowingOutputOnly = false;
-
-        // เปิดสีพื้นหลัง และ ช่องพิมพ์ กลับมา
-        if (backgroundImage != null) backgroundImage.enabled = true;
-        if (inputField != null) inputField.gameObject.SetActive(true);
-
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
+        Time.timeScale = 0f; 
+        Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
 
-        if (inputField != null)
+        if (audioSource != null && openSound != null)
         {
-            inputField.Select();
-            inputField.ActivateInputField();
+            audioSource.PlayOneShot(openSound);
+        }
+
+        if (inputArea != null) inputArea.SetActive(true);
+        if (extraHideElement1 != null) extraHideElement1.SetActive(true);
+        if (extraHideElement2 != null) extraHideElement2.SetActive(true);
+        if (outputArea != null) outputArea.SetActive(false);
+
+        // ✨ สั่ง "ซ่อน" Object ทันทีที่เปิดหน้าต่าง Terminal
+        if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(false);
+
+        if (inputArea != null)
+        {
+            TMP_InputField input = inputArea.GetComponentInChildren<TMP_InputField>();
+            if (input != null)
+            {
+                input.Select();
+                input.ActivateInputField();
+            }
         }
     }
 
     public void CloseTerminal()
     {
         isOpen = false;
-        isShowingOutputOnly = false;
-
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
+        Time.timeScale = 1f; 
+        Cursor.lockState = CursorLockMode.Locked; 
         Cursor.visible = false;
+
+        if (audioSource != null && closeSound != null)
+        {
+            audioSource.PlayOneShot(closeSound);
+        }
+
+        // ✨ สั่ง "โชว์" Object กลับมาทันทีที่ปิดหน้าต่าง Terminal
+        if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(true);
     }
 
-    // ฟังก์ชันใหม่: เรียกใช้ตอนกดส่งโค้ด เพื่อลบภาพพื้นหลังทิ้ง
-    public void ShowOnlyOutput()
+    public void ShowOutputState()
     {
-        isShowingOutputOnly = true;
-        
-        // สั่งปิด "สีพื้นหลัง" และ "ช่องพิมพ์" (เหลือแค่หน้าต่างใสๆ กับ Output)
-        if (backgroundImage != null) backgroundImage.enabled = false;
-        if (inputField != null) inputField.gameObject.SetActive(false);
+        if (inputArea != null) inputArea.SetActive(false);
+        if (extraHideElement1 != null) extraHideElement1.SetActive(false);
+        if (extraHideElement2 != null) extraHideElement2.SetActive(false);
+        if (outputArea != null) outputArea.SetActive(true);
     }
 }
