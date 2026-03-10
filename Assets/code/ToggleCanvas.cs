@@ -18,14 +18,13 @@ public class ToggleCanvas : MonoBehaviour
     [Header("Elements to SHOW on Submit")]
     public GameObject outputArea; 
 
-    // ✨ เพิ่มช่องนี้เข้ามาใหม่: ซ่อนเมื่อเปิด Terminal โชว์เมื่อปิด
-    [Header("ซ่อน Object นี้เมื่อเปิด Terminal")]
+    [Header("Hide Object when open Terminal")]
     public GameObject objectToHideWhenOpen; 
 
-    [Header("Sound Effects (เสียงประกอบ)")]
-    public AudioSource audioSource; // ตัวลำโพง
-    public AudioClip openSound;     // ไฟล์เสียงตอนเปิด
-    public AudioClip closeSound;    // ไฟล์เสียงตอนปิด
+    [Header("Sound Effects")]
+    public AudioSource audioSource; 
+    public AudioClip openSound;     
+    public AudioClip closeSound;    
 
     private bool isOpen = false;
 
@@ -72,7 +71,6 @@ public class ToggleCanvas : MonoBehaviour
         if (extraHideElement2 != null) extraHideElement2.SetActive(true);
         if (outputArea != null) outputArea.SetActive(false);
 
-        // ✨ สั่ง "ซ่อน" Object ทันทีที่เปิดหน้าต่าง Terminal
         if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(false);
 
         if (inputArea != null)
@@ -98,7 +96,6 @@ public class ToggleCanvas : MonoBehaviour
             audioSource.PlayOneShot(closeSound);
         }
 
-        // ✨ สั่ง "โชว์" Object กลับมาทันทีที่ปิดหน้าต่าง Terminal
         if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(true);
     }
 
