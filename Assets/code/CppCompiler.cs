@@ -13,6 +13,12 @@ public class CppCompiler : MonoBehaviour
     public GameObject blockPrefab; 
     public Transform bridgeStartPoint; 
 
+    [Header("Room Door 1")]
+    public GameObject targetDoor1;
+
+    [Header("Room Door 2")]
+    public GameObject targetDoor2;
+
     private string apiUrl = "https://wandbox.org/api/compile.json";
 
     public void RunCppCode(string playerCode)
@@ -72,15 +78,35 @@ public class CppCompiler : MonoBehaviour
                                 }
                             }
                         }
+                        else if (line.Trim() == "OPEN_DOOR_CMD")
+                        {
+                            if (targetDoor1 != null)
+                            {
+                                targetDoor1.SetActive(false); 
+                                outputText.text += "\n<color=#00FFFF>> Door Unlocked!</color>\n";
+                            }
+                        }
+                        else if (line.StartsWith("UNLOCK"))
+                        {
+                            string[] parts = line.Split(' ');
+                            if (parts.Length == 4 && targetDoor2 != null)
+                            {
+                                if (parts[1] == "2" && parts[2] == "7" && parts[3] == "1")
+                                {
+                                    targetDoor2.SetActive(false); 
+                                    outputText.text += "\n<color=#00FFFF>> Door Unlocked!</color>\n";
+                                }
+                            }
+                        }
                     }
                 }
                 else 
                 {
                     outputText.text += "<color=red>[Compile Error]\n" + response.compiler_error + "</color>\n";
                 }
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }
 
 [System.Serializable] public class WandboxRequest { public string compiler; public string code; public bool save; }

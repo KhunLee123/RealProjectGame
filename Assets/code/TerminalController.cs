@@ -39,6 +39,12 @@ public class TerminalController : MonoBehaviour
             "    cout << \"SPAWN_BLOCK 0 0 \" << _bridgeZ << \"\\n\";\n" +
             "    _bridgeZ += 2;\n" +
             "}\n" +
+            "void open_door() {\n" +
+            "    cout << \"OPEN_DOOR_CMD\\n\";\n" + 
+            "}\n" +
+            "void unlock_safe(int a, int b, int c) {\n" +
+            "    cout << \"UNLOCK \" << a << \" \" << b << \" \" << c << \"\\n\";\n" + 
+            "}\n" +
             "int main() {\n" +
             playerCode + "\n" + 
             "return 0;\n" +
