@@ -26,7 +26,10 @@ public class ToggleCanvas : MonoBehaviour
     public AudioClip openSound;     
     public AudioClip closeSound;    
 
-    private bool isOpen = false;
+    [Header("Player Settings")]
+    public MonoBehaviour playerController; 
+
+    public bool isOpen = false; 
 
     void Start()
     {
@@ -39,10 +42,6 @@ public class ToggleCanvas : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && !isOpen)
         {
             OpenTerminal();
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) && isOpen)
-        {
-            CloseTerminal();
         }
 
         Vector3 targetScale = isOpen ? Vector3.one : Vector3.zero;
@@ -61,16 +60,14 @@ public class ToggleCanvas : MonoBehaviour
         Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
 
-        if (audioSource != null && openSound != null)
-        {
-            audioSource.PlayOneShot(openSound);
-        }
+        if (playerController != null) playerController.enabled = false;
+
+        if (audioSource != null && openSound != null) audioSource.PlayOneShot(openSound);
 
         if (inputArea != null) inputArea.SetActive(true);
         if (extraHideElement1 != null) extraHideElement1.SetActive(true);
         if (extraHideElement2 != null) extraHideElement2.SetActive(true);
         if (outputArea != null) outputArea.SetActive(false);
-
         if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(false);
 
         if (inputArea != null)
@@ -91,10 +88,9 @@ public class ToggleCanvas : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked; 
         Cursor.visible = false;
 
-        if (audioSource != null && closeSound != null)
-        {
-            audioSource.PlayOneShot(closeSound);
-        }
+        if (playerController != null) playerController.enabled = true;
+
+        if (audioSource != null && closeSound != null) audioSource.PlayOneShot(closeSound);
 
         if (objectToHideWhenOpen != null) objectToHideWhenOpen.SetActive(true);
     }
