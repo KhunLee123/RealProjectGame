@@ -19,6 +19,11 @@ public class CppCompiler : MonoBehaviour
     [Header("Room Door 2")]
     public GameObject targetDoor2;
 
+    [Header("Room Door 4")]
+    public GameObject door1;
+    public GameObject door2;
+    public GameObject door3;
+
     private string apiUrl = "https://wandbox.org/api/compile.json";
 
     public void RunCppCode(string playerCode)
@@ -98,6 +103,21 @@ public class CppCompiler : MonoBehaviour
                                 }
                             }
                         }
+                        else if (line.Trim() == "OPEN_DOOR_CMD 1")
+                        {
+                            if (door1 != null) door1.SetActive(false); 
+                            outputText.text += "\n<color=#00FFFF>> Door Unlocked!</color>\n";
+                        }
+                         else if (line.Trim() == "OPEN_DOOR_CMD 2")
+                        {
+                            if (door2 != null) door2.SetActive(false); 
+                            outputText.text += "\n<color=#00FFFF>> Door Unlocked!</color>\n";
+                        }
+                        else if (line.Trim() == "OPEN_DOOR_CMD 3")
+                        {
+                            if (door3 != null) door3.SetActive(false); 
+                            outputText.text += "\n<color=#00FFFF>> Door Unlocked!</color>\n";
+                        }               
                     }
                 }
                 else 
