@@ -26,6 +26,7 @@ public class TerminalController : MonoBehaviour
         string playerCode = inputField.text;
         if (string.IsNullOrWhiteSpace(playerCode)) return;
 
+        // 🚨 เคลียร์ข้อความเก่าทิ้ง: สังเกตว่าใช้เครื่องหมาย = แทน += แล้วครับ
         if (compiler.outputText != null)
         {
             compiler.outputText.text = "<color=yellow>user@terminal:~$</color> \n" + playerCode + "\n";

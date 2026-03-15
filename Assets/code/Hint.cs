@@ -50,6 +50,7 @@ public class Hint : MonoBehaviour
 
         while (time < duration)
         {
+            // 🚨 แก้ตรงนี้ครับ! ใช้ Time.unscaledDeltaTime แทน
             time += Time.unscaledDeltaTime; 
             
             float t = time / duration;
